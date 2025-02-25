@@ -1,0 +1,57 @@
+name: CI Workflow
+
+on:
+  push: 
+    branches:
+      - main
+  pull_request: 
+    types: [opened, synchronize]
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  
+    
+    if: github.event_name != 'push' || github.event.head_commit.message != 'Update project code'  
+    
+    steps:
+      - name: Checkout code 
+        uses: actions/checkout@v2 
+
+      - name: Set up Python 
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies 
+        run: |
+          pip install -r requirements.txt
+
+      - name: Create a project build. 
+        run: |
+          now=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "This file was created on $now" > "$now.txt"
+
+      - name: Run unit tests 
+        run: |
+          pytest test_default.py
+
+      - name: Update project code 
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --global user.name "Your Name" 
+          git config --global user.email "your_email@example.com"  
+          branch_name="new-feature-branch_${GITHUB_RUN_NUMBER}"
+          git checkout -b "$branch_name"
+          git add .  
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Update project code"  
+            git push origin "$branch_name"
+          else
+            echo "No changes to commit."
+          fi
+
+      - name: Verify script execution 
+        run: |
+          echo "Script executed successfully!"
+      
