@@ -1,3 +1,5 @@
+[![CI Workflow](https://github.com/heeylena/python-app-heeylena/actions/workflows/cicd-python.yml/badge.svg)](https://github.com/heeylena/python-app-heeylena/actions/workflows/cicd-python.yml)
+
 # Flask Product API
 
 This is a simple Flask API for managing product data. The API allows you to perform basic CRUD (Create, Read, Update, Delete) operations on products.
